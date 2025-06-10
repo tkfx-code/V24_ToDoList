@@ -1,6 +1,66 @@
-﻿<h3>Calculator</h3>
+﻿@page "/calculator"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Simple Calculator</h1>
+Number 1:
+<input type="number" @bind="number1" />
+Number 2:
+<input type="number" @bind="number2" />
+<br />
+<br />
+
+<button class="btn btn-primary" @onclick= "@(() => Addition(number1, number2))">Add</button> 
+<button class="btn btn-primary" @onclick="@(() => Subtraction(number1, number2))">Subtract</button>
+<button class="btn btn-primary" @onclick="@(() => Multiplication(number1, number2))">Multiply</button>
+<button class="btn btn-primary" @onclick="@(() => Division(number1, number2))">Divide</button>
+<br />
+<br />
+
+<h3 role="status">@calculation @sum</h3>
+
+<br />
+
 
 @code {
-	//Övning. Gör två inmatningsfält för siffror. 4 knappar, som gör beräkningen för + - / och  *
+    //Övning. Gör två inmatningsfält för siffror. 4 knappar, som gör beräkningen för + - / och  *
 
+    double sum = 0;
+	string calculation = string.Empty;
+    double number1;
+    double number2;
+
+    private void Addition(double number1, double number2)
+    {
+        double sum = (number1 + number2);
+        var calculation = $"{number1} + {number2} ="; //Create a variable to show the calculation - less confusion for user
+        this.calculation = calculation; // Assign the value to the class variable to display it
+        this.sum = sum; // Assign the value to the class variable to display it
+    }
+
+    private void Subtraction(double number1, double number2)
+    {
+        double sum = (number1 - number2);
+        var calculation = $"{number1} - {number2} =";
+        this.calculation = calculation;
+        this.sum = sum;
+    }
+
+    private void Multiplication(double number1, double number2)
+    {
+        double sum = (number1 * number2);
+        var calculation = $"{number1} * {number2} =";
+        this.calculation = calculation;
+        this.sum = sum;
+    }
+
+    private void Division(double number1, double number2)
+    {
+        double sum = (number1 / number2);
+        var calculation = $"{number1} / {number2} =";
+        this.calculation = calculation;
+		this.sum = Double.Round(sum, 2, MidpointRounding.AwayFromZero); // Round the shown result to 2 decimal places
+    }
 }
+
