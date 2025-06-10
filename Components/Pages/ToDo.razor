@@ -1,0 +1,111 @@
+﻿@page "/todo"
+@rendermode InteractiveServer
+
+<h3>To Do</h3>
+<p> Welcome to your to do list! </p>
+
+<div class="mb-3">
+    <form @onsubmit="HandleSubmit">
+    <input @bind="newToDo" @bind:event="oninput" class="form-control" placeholder="Add Task">
+    <button class ="btn btn-primary mt-2" @onclick="AddToDo">Add</button>
+    </form>
+</div>
+
+@if (todos.Count == 0)
+{
+    <p>You have no unfinished tasks</p>
+}
+else
+{
+    <h4> Current Tasks </h4>
+    <ul class="list-group mb=4">
+        @foreach (var todo in todos.Where(t => !t.IsComplete))
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <span>@todo.Title</span>
+                    <br />
+                    <small class="text-muted">Due: @todo.Due.ToShortDateString()</small>
+                </div>
+                <input type="checkbox" @bind="todo.IsComplete" class="form-check-input me-2" />
+                @* <span class="@((todo.IsComplete ? "text-decoration-line-through" : ""))">@todo.Title</span>
+                <input @bind="todo.Title" /> *@
+            </li>
+        }
+    </ul>
+
+    <h4> Completed Tasks </h4>
+    <ul class="list-group">
+        @foreach (var todo in todos.Where(t => t.IsComplete))
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-decoration-line-through">@todo.Title</span>
+                    <br />
+                    <small class="text-muted">Due: @todo.Due.ToShortDateString()</small>
+                </div>
+                <input type="checkbox" @bind="todo.IsComplete" class="form-check-input me-2" />
+            </li>
+        }
+    </ul>
+}
+
+
+@code {
+    private string newToDo = string.Empty;
+    private List<ToDoItem> todos = new();
+
+
+    private void AddToDo()
+    {
+        if (!string.IsNullOrWhiteSpace(newToDo))
+        {
+            todos.Add(new ToDoItem { Title = newToDo, Due = RandomDay(), IsComplete = false });
+            newToDo = string.Empty;
+        }
+    }
+    private class ToDoItem
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public DateTime Due { get; set; } = RandomDay();
+        public bool IsComplete { get; set; } 
+
+        private Random dateTime = new Random();
+    }
+
+    // public class RandomDay
+    // {
+    //     DateTime start;
+    //     Random gen;
+    //     int range;
+
+    //     public RandomDay()
+    //     {
+    //         start = new DateTime(2025, 1, 1);
+    //         gen = new Random();
+    //         range = (DateTime.Today - start).Days;
+    //     }
+
+    //     public DateTime Next()
+    //     {
+    //         return start.AddDays(gen.Next(range));
+    //     }
+    // }
+
+    public static DateTime RandomDay()
+    {
+        var random = new Random();
+        var year = 2025;
+        var month = random.Next(1, 12);
+        var noOfDaysMonth = DateTime.DaysInMonth(year, month);
+        var day = random.Next(1, noOfDaysMonth + 1);
+
+        return new DateTime(year, month, day);
+    }
+
+    private async Task HandleSubmit()
+    {
+        AddToDo();
+    }
+}
