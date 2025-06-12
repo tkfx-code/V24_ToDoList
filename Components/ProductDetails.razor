@@ -1,0 +1,26 @@
+﻿<!--Child Component-->
+<div class="product-details">
+	<h3>@Product.Name</h3>
+	<h4>Quantity: @Product.Quantity</h4>
+	<label>Price:</label>
+	<input type="number" @bind="Product.Price"/>
+	<button @onclick="ChangePrice">Change Price</button>
+</div>
+
+@code {
+	//Shows product information by using collection of products
+	//Passes single selected product via parameters
+	[Parameter]
+	public Product Product { get; set; }
+	[Parameter]
+	public EventCallback<string> OnPriceChanged { get; set; }
+
+	//Method to handle product selection
+	private async Task ChangePrice()
+	{
+		if (OnPriceChanged.HasDelegate) {
+			//Invoke the callback to notify parent component about the price change)
+			await OnPriceChanged.InvokeAsync(Product.Name);
+		}
+	}
+}

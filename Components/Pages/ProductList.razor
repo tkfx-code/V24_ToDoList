@@ -1,0 +1,54 @@
+﻿<!--Parent component-->
+@page "/productlist"
+@rendermode InteractiveServer
+<h3>ProductList</h3>
+<br/>
+
+<ul>
+	@foreach (var product in Products)
+	{
+		<li>
+			<h5>@product.Name</h5>Quantity: @product.Quantity Price: @product.Price
+			<button class="btn btn-primary" @onclick="() => SelectProduct(product)">Select</button>
+		</li>
+	}
+</ul>
+
+@if (SelectedProduct != null)
+{
+	<h4>Selected Product: @SelectedProduct.Name</h4>
+	<ProductDetails Product="SelectedProduct" OnPriceChanged="HandlePriceChange" />
+}
+
+@code {
+	//Hard code products to list
+	private List<Product> Products = new List<Product>
+	{
+		new Product { Name = "Laptop", Quantity = 10, Price = 999.99 },
+		new Product { Name = "Smartphone", Quantity = 25, Price = 499.99 },
+		new Product { Name = "Tablet", Quantity = 15, Price = 299.99 },
+		new Product { Name = "Smartwatch", Quantity = 30, Price = 199.99 },
+	};
+
+	private string? ConfirmationMessage;
+	private Product? SelectedProduct;
+
+	private void SelectProduct(Product product)
+	{
+		SelectedProduct = product;
+		Console.WriteLine("Test");
+	}
+
+	private async void HandlePriceChange(string productName)
+	{
+		//Show confirmation message for changed price
+		ConfirmationMessage = $"Price successfully changed for {productName}.";
+		// Refresh the UI to show the confirmation message
+		StateHasChanged();
+		//Delay 3 seconds and then clear ConfirmqtionMessage
+		await Task.Delay(3000);
+		ConfirmationMessage = string.Empty;
+		StateHasChanged();
+	}
+
+}
